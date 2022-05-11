@@ -1,0 +1,6 @@
+eamon,lizard,eamon,csheamon1996@gmail.com,Customer
+haha,a,haha,haha@gmail.com,Customer
+careen,careen,careen,careen@gmail.com,Customer
+eamon ,a,chin,@gmail.com,Customer
+
+justin,mr justin,justin,justin@gmail.com,Trainer
