@@ -1,13 +1,7 @@
 package com.mycompany.iooj;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.List;
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class userPayment extends javax.swing.JFrame {
@@ -16,6 +10,7 @@ public class userPayment extends javax.swing.JFrame {
     private double ensurepayment = 0;
     private String username;
     private String alias;
+    
     public userPayment() {
     initComponents();
     }
@@ -25,6 +20,7 @@ public class userPayment extends javax.swing.JFrame {
         this.alias = alias;
         Textamount.setEditable(false);
         Textchange.setEditable(false);
+        Textdetail.setEditable(false);
         DefaultTableModel tbm = (DefaultTableModel)Tablesessions.getModel();
         Tablesessions.setDefaultEditor(Object.class, null);
     }
@@ -49,6 +45,9 @@ public class userPayment extends javax.swing.JFrame {
         Tablesessions = new javax.swing.JTable();
         Buttonshowamount = new javax.swing.JButton();
         Buttonback = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Textdetail = new javax.swing.JTextArea();
+        Labeldetail = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -100,23 +99,22 @@ public class userPayment extends javax.swing.JFrame {
                         .addGroup(PanelpaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(Labelamount)
                             .addComponent(Labelpaidamount))
-                        .addContainerGap(251, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(PanelpaymentLayout.createSequentialGroup()
                         .addGroup(PanelpaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Labelcustomer)
-                            .addComponent(Labelchange))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(Labelchange)
+                            .addComponent(Labelcustomer))
+                        .addGap(0, 172, Short.MAX_VALUE))))
         );
         PanelpaymentLayout.setVerticalGroup(
             PanelpaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelpaymentLayout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(Labelcustomer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Textusername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Buttonsearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(34, 34, 34)
+                .addGap(46, 46, 46)
                 .addComponent(Labelamount)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Textamount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -145,7 +143,7 @@ public class userPayment extends javax.swing.JFrame {
         Tablesessions.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(Tablesessions);
 
-        Buttonshowamount.setText("SHOW AMOUNT");
+        Buttonshowamount.setText("SHOW");
         Buttonshowamount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButtonshowamountActionPerformed(evt);
@@ -158,6 +156,12 @@ public class userPayment extends javax.swing.JFrame {
                 ButtonbackActionPerformed(evt);
             }
         });
+
+        Textdetail.setColumns(20);
+        Textdetail.setRows(5);
+        jScrollPane2.setViewportView(Textdetail);
+
+        Labeldetail.setText("Session Details:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -173,6 +177,10 @@ public class userPayment extends javax.swing.JFrame {
                         .addComponent(Buttonshowamount, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Panelpayment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Labeldetail))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -180,6 +188,10 @@ public class userPayment extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Labeldetail)
+                        .addGap(7, 7, 7)
+                        .addComponent(jScrollPane2))
                     .addComponent(Panelpayment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -207,40 +219,32 @@ public class userPayment extends javax.swing.JFrame {
                         ur.completepayment(value);
                         JOptionPane.showMessageDialog(null,"Successfull Payment");
                         
-                            if (Textusername.getText().equals("")){
-                            JOptionPane.showMessageDialog(null,"No name was inputted","Error",JOptionPane.ERROR_MESSAGE);
-                        }
-                        else{
-
+                        //remove update the table
                         DefaultTableModel tbm = (DefaultTableModel)Tablesessions.getModel();
                         int numberofrowneededtoberemove = tbm.getRowCount();
                         if(tbm.getRowCount()>-1){
                             for(int i = 0;i<numberofrowneededtoberemove; i++){
                             tbm.removeRow(0);
-                        }
-                        }
-
-                        try{
-                        String [] info = ur.show();
-
-                        for (int i = 0;i <info.length;i++){
-                        String [] add = info[i].split("~");
-
-                        //add[0] = String.format("%04d",Integer.parseInt(add[0]));
-                        String [] price = {add[0],add[4],add[5]};
-                            if(add[4].equals(Textusername.getText()) && add[10].equals("unpaid")){
-                                        tbm.addRow(price);
                             }
+                        }
+                        
+                        String [] updatetable = ur.getfilecontent();
+        
+                            for (int i = 0;i <updatetable.length;i++){
+                            String [] add = updatetable[i].split("~");
 
-                        }
-                        }
-                        catch (IOException e){
-                        JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
-                        }
+                            //add[0] = String.format("%04d",Integer.parseInt(add[0]));
+                            String [] price = {add[0],add[4],add[5]};
+                                if(add[4].equals(Textusername.getText()) && add[10].equals("unpaid") && add[5].equals(username)){
+                                            tbm.addRow(price);
+                                }   
+                                
+
                         }
                         Textpaidamount.setText("");
                         Textamount.setText("");
                         Textchange.setText("");
+                        Textdetail.setText("");
                         
                     }
                     catch(IOException e){
@@ -265,7 +269,7 @@ public class userPayment extends javax.swing.JFrame {
 
     private void ButtonbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonbackActionPerformed
         this.setVisible(false);
-        new Trainermainpage(username,alias).setVisible(true);
+        new Trainermainpage(username +","+ alias).setVisible(true);
 
     }//GEN-LAST:event_ButtonbackActionPerformed
 
@@ -278,9 +282,10 @@ public class userPayment extends javax.swing.JFrame {
                 int row = Tablesessions.getSelectedRow();
                 String value = Tablesessions.getModel().getValueAt(row, column).toString();
                 
-                String logvalue = ur.showlog(value);
+                String logvalue = ur.displayspecificlog(value);
                 String [] splitlog = logvalue.split("~");
-                Textamount.setText(splitlog[4]);
+                Textamount.setText(splitlog[9]);
+                Textdetail.setText("DATE: "+ splitlog[1] + "\n" +"TIME: "+splitlog[2]+ "\n" +"ROUTINE: "+splitlog[3]+ "\n" +"STATUS: "+splitlog[6]);
                 rowselected = Tablesessions.getSelectedRow();
                 
             }
@@ -304,10 +309,12 @@ public class userPayment extends javax.swing.JFrame {
                 }
                 else{
                     try{ 
+                        //calculate the difference in amount
                         double change = Double.parseDouble(Textpaidamount.getText()) - Double.parseDouble(Textamount.getText());
                         if (change < 0){
                             JOptionPane.showMessageDialog(null,"Insufficient amount","Error",JOptionPane.ERROR_MESSAGE);
                         }else{
+                            //ensure format is 2 decimal
                             Textchange.setText(String.valueOf(df.format(change)));
                             ensurepayment = Double.parseDouble(Textpaidamount.getText());
                         }
@@ -325,17 +332,17 @@ public class userPayment extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No row selected","Error",JOptionPane.ERROR_MESSAGE);
         }
 
-        
-        // TODO add your handling code here:
     }//GEN-LAST:event_ButtoncalculateActionPerformed
 
     private void ButtonsearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonsearchActionPerformed
+        //check if info is given
         if (Textusername.getText().equals("")){
             JOptionPane.showMessageDialog(null,"No name was inputted","Error",JOptionPane.ERROR_MESSAGE);
         }
         else{
-            
-        userTrainer ur = new userTrainer();
+        Textdetail.setText("");
+        userTrainer trainer = new userTrainer();
+        //remove the content of the table
         DefaultTableModel tbm = (DefaultTableModel)Tablesessions.getModel();
         int numberofrowneededtoberemove = tbm.getRowCount();
         if(tbm.getRowCount()>-1){
@@ -345,7 +352,7 @@ public class userPayment extends javax.swing.JFrame {
         }
 
         try{
-        String [] info = ur.show();
+        String [] info = trainer.getfilecontent();
         
         for (int i = 0;i <info.length;i++){
         String [] add = info[i].split("~");
@@ -355,8 +362,9 @@ public class userPayment extends javax.swing.JFrame {
             if(add[4].equals(Textusername.getText()) && add[10].equals("unpaid") && add[5].equals(username)){
                         tbm.addRow(price);
             }
-
         }
+        
+        
         }
         catch (IOException e){
         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
@@ -407,13 +415,16 @@ public class userPayment extends javax.swing.JFrame {
     private javax.swing.JLabel Labelamount;
     private javax.swing.JLabel Labelchange;
     private javax.swing.JLabel Labelcustomer;
+    private javax.swing.JLabel Labeldetail;
     private javax.swing.JLabel Labelpaidamount;
     private javax.swing.JPanel Panelpayment;
     private javax.swing.JTable Tablesessions;
     private javax.swing.JTextField Textamount;
     private javax.swing.JTextField Textchange;
+    private javax.swing.JTextArea Textdetail;
     private javax.swing.JTextField Textpaidamount;
     private javax.swing.JTextField Textusername;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }

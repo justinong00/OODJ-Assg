@@ -1,11 +1,14 @@
 package com.mycompany.iooj;
 import javax.swing.*;
-import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class logIn extends javax.swing.JFrame {
-
+    
+    private int numberoftimes;
     public logIn() {
+        numberoftimes = 3;
         initComponents();
+        Buttonforgot.setVisible(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -21,7 +24,6 @@ public class logIn extends javax.swing.JFrame {
         Textpassword = new javax.swing.JPasswordField();
         Buttonsignup = new javax.swing.JButton();
         Buttonlogin = new javax.swing.JButton();
-        Checkrememberme = new javax.swing.JCheckBox();
         Buttonforgot = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -48,8 +50,6 @@ public class logIn extends javax.swing.JFrame {
             }
         });
 
-        Checkrememberme.setText("REMEMBER ME");
-
         Buttonforgot.setText("FORGOT PASSWORD");
         Buttonforgot.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -75,9 +75,7 @@ public class logIn extends javax.swing.JFrame {
                             .addComponent(Textpassword)
                             .addComponent(Textusername)
                             .addGroup(PanelloginLayout.createSequentialGroup()
-                                .addGroup(PanelloginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(Checkrememberme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(Comborole, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(Comborole, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 135, Short.MAX_VALUE))))
                     .addGroup(PanelloginLayout.createSequentialGroup()
                         .addComponent(Buttonsignup, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -97,18 +95,14 @@ public class logIn extends javax.swing.JFrame {
                     .addComponent(Textpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Labelpassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PanelloginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PanelloginLayout.createSequentialGroup()
-                        .addComponent(Labelrole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(97, 97, 97))
-                    .addGroup(PanelloginLayout.createSequentialGroup()
-                        .addComponent(Comborole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Checkrememberme)
-                        .addGap(26, 26, 26)
-                        .addGroup(PanelloginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Buttonlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Buttonsignup, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(PanelloginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Comborole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Labelrole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(58, 58, 58)
+                .addGroup(PanelloginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Buttonlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Buttonsignup, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Buttonforgot, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57))
         );
@@ -152,64 +146,84 @@ public class logIn extends javax.swing.JFrame {
     }//GEN-LAST:event_ButtonforgotActionPerformed
 
     private void ButtonloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonloginActionPerformed
-        Boolean rolecheck;
-        Boolean passwordcheck;
-        String redirectpage;
-        String username;
-        
+        //check credentials validations
+        String returnprompt;
+
         if (Textusername.getText().equals("")||Textpassword.getPassword().equals("")){
           JOptionPane.showMessageDialog(null,"Incompelete Info","Error",JOptionPane.ERROR_MESSAGE);
           Textpassword.setText("");
         }
         else
         {
-          userlogin un = new userlogin(Textusername.getText());
-          String verifyusername = un.validateusername();
-            if (verifyusername != null)
+          //initiate credentials verifications
+          userlogin login = new userlogin(Textusername.getText(),String.valueOf(Textpassword.getPassword()),Comborole.getSelectedItem().toString());
+          
+          returnprompt = login.infovalidation();
+          
+          //check if username exist
+            if (returnprompt.equals("correct"))
             {                   
-                rolecheck = un.verifyrole(verifyusername,Comborole.getSelectedItem().toString());
-                if (rolecheck){
-                    passwordcheck = un.verifypassword(verifyusername,String.valueOf(Textpassword.getPassword()));
-                    if (passwordcheck){
-                    username = Textusername.getText();
-                    Textusername.setText("");
-                    Textpassword.setText("");
-                    this.setVisible(false);
-                    redirectpage = un.redirectpage();
-                    String [] splitredirect = redirectpage.split(",");
-                    
-                    if (splitredirect[0].equals("Customer")){
-                        un.logtime("logged in");
-                        un.logtime("logged out");
-                        
-                    }
-                    else if (splitredirect[0].equals("Trainer")){
-                        un.logtime("logged in");
-                        new Trainermainpage(username,splitredirect[1]).setVisible(true);
-                        un.logtime("logged out");
-                    }
-                    else if (splitredirect[0].equals("Manager")){
-                        un.logtime("logged in");
-                        un.logtime("logged out");
-                    }
-                    }
-                    else{
-                    JOptionPane.showMessageDialog(null,"Incorrect password","Error",JOptionPane.ERROR_MESSAGE);
-                    Textpassword.setText("");
-                    Buttonforgot.setVisible(true);
-                    }
+                this.setVisible(false);
+                if (Comborole.getSelectedItem().toString().equals("Customer")){
+                    login.logtime("Customer");
+                    JOptionPane.showMessageDialog(null,"Nothing here","Error",JOptionPane.ERROR_MESSAGE);
+
                 }
-                else{
-                    JOptionPane.showMessageDialog(null,("No " + Comborole.getSelectedItem().toString() + " named " + verifyusername),"Error",JOptionPane.ERROR_MESSAGE);
+                else if (Comborole.getSelectedItem().toString().equals("Trainer")){
+                    login.logtime("Trainer");
+                    new Trainermainpage(login.outinfo()).setVisible(true);
+                }
+                else if (Comborole.getSelectedItem().toString().equals("Manager")){
+                    login.logtime("Manager");
+                    JOptionPane.showMessageDialog(null,"nothing here","Error",JOptionPane.ERROR_MESSAGE);
                 }
             }
-            else
-            {
+            else if(returnprompt.equals("incorrect password")){
+                JOptionPane.showMessageDialog(null,"Incorrect password","Error",JOptionPane.ERROR_MESSAGE);
+                Textpassword.setText("");
+                Buttonforgot.setVisible(true);
+                numberoftimes--;
+                    boolean checking = login.incorrectlogin(numberoftimes);
+                    if (checking){
+                        try{
+                            TimeUnit.SECONDS.sleep(10);
+                            JOptionPane.showMessageDialog(null,"Try again now");
+                            numberoftimes=3;
+                        }catch(InterruptedException e){
+                            JOptionPane.showMessageDialog(null,"Error occured","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+            }else if (returnprompt.equals("Incorrect role")){  
+                JOptionPane.showMessageDialog(null,("No " + Comborole.getSelectedItem().toString() + " named " + Textusername.getText()),"Error",JOptionPane.ERROR_MESSAGE);
+                numberoftimes--;
+                    boolean checking = login.incorrectlogin(numberoftimes);
+                    if (checking){
+                        try{
+                            TimeUnit.SECONDS.sleep(10);
+                            JOptionPane.showMessageDialog(null,"Try again now");
+                            numberoftimes=3;
+                        }catch(InterruptedException e){
+                            JOptionPane.showMessageDialog(null,"Error occured","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+                    }   
+            }else if (returnprompt.equals("username does not exist")){
                 JOptionPane.showMessageDialog(null,"Incorrect Username","Error",JOptionPane.ERROR_MESSAGE);
                 Textusername.setText("");
                 Textpassword.setText("");
-            }                   
-        }      
+                numberoftimes--;
+                    boolean checking = login.incorrectlogin(numberoftimes);
+                    if (checking){
+                            try{
+                                TimeUnit.SECONDS.sleep(10);
+                                JOptionPane.showMessageDialog(null,"Try again now");
+                                numberoftimes=3;
+
+                            }catch(InterruptedException e){
+                                JOptionPane.showMessageDialog(null,"Error occured","Error",JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+            }               
+        }         
     }//GEN-LAST:event_ButtonloginActionPerformed
 
     public static void main(String args[]) {
@@ -248,7 +262,6 @@ public class logIn extends javax.swing.JFrame {
     private javax.swing.JButton Buttonforgot;
     private javax.swing.JButton Buttonlogin;
     private javax.swing.JButton Buttonsignup;
-    private javax.swing.JCheckBox Checkrememberme;
     private javax.swing.JComboBox<String> Comborole;
     private javax.swing.JLabel Labelpassword;
     private javax.swing.JLabel Labelrole;

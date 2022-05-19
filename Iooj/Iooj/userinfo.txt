@@ -1,6 +1,11 @@
-eamon,lizard,eamon,csheamon1996@gmail.com,Customer
-haha,a,haha,haha@gmail.com,Customer
-careen,careen,careen,careen@gmail.com,Customer
-eamon ,a,chin,@gmail.com,Customer
-
-justin,mr justin,justin,justin@gmail.com,Trainer
+eamon,lizard,1234,csheamon1996@gmail.com,Customer
+haha,a,haha,haha@gmail.com,Customer,0168843213
+careen,careen,careen,careen@gmail.com,Customer,0168843213
+eamon ,a,chin,@gmail.com,Customer,0168843213
+justin,mr justin,jo,justin@gmail.com,Trainer,0168843213
+nomae,a,ea,ga@gmail.com,Customer,0168843213
+huehue,a,a,a@gmail.com,Customer,0168843213
+jer,j,jer,jershyan@gmail.com,Trainer,0168843213
+jermain,a,a,@gmail.com,Customer,012
+raymond,a,a,@gmail.com,Trainer,0123
+sweet,s,s,@gmail.com,Manager,0158843213

@@ -61,10 +61,7 @@
                               <Component id="Textpassword" alignment="0" max="32767" attributes="0"/>
                               <Component id="Textusername" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="Checkrememberme" max="32767" attributes="0"/>
-                                      <Component id="Comborole" min="-2" pref="162" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="Comborole" min="-2" pref="162" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="135" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -93,22 +90,16 @@
                       <Component id="Labelpassword" alignment="3" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="Labelrole" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="97" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="Comborole" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="Checkrememberme" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="Buttonlogin" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="Buttonsignup" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="Comborole" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="Labelrole" alignment="3" max="32767" attributes="0"/>
                   </Group>
+                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="Buttonlogin" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="Buttonsignup" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="Buttonforgot" min="-2" pref="33" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
               </Group>
@@ -164,11 +155,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonloginActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="Checkrememberme">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="REMEMBER ME"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="Buttonforgot">
           <Properties>

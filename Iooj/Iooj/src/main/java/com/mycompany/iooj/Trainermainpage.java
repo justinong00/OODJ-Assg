@@ -1,20 +1,26 @@
 package com.mycompany.iooj;
 
-import java.io.IOException;
 import java.text.ParseException;
 
 public class Trainermainpage extends javax.swing.JFrame {
+    private String information;
     private String username;
     private String alias;
-
+    
     public Trainermainpage() {
         initComponents();
     }
-    public Trainermainpage(String username,String alias) {
+    
+    //retrive entire list
+    public Trainermainpage(String information) {
+        this.information = information;
+        String [] userinformation = this.information.split(",");
+        userTrainer trainer = new userTrainer();
+        trainer.setUsername(userinformation[0]);
+        trainer.setAlias(userinformation[1]);
         initComponents();
-        this.username = username;
-        this.alias = alias;
-        Labelwelcome.setText("Welcome back " + alias );
+
+        Labelwelcome.setText("Welcome back " + trainer.getAlias() );
     }
 
     @SuppressWarnings("unchecked")
@@ -103,23 +109,22 @@ public class Trainermainpage extends javax.swing.JFrame {
 
     private void ButtonviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonviewActionPerformed
         this.setVisible(false);
+        String [] userinformation = information.split(",");
         try{
-        new Trainer(username,alias).setVisible(true);
+        new Trainer(userinformation[0],userinformation[1]).setVisible(true);
         }
-        catch(ParseException e){
-            
-        }
-        // TODO add your handling code here:
+        catch(ParseException e){}
     }//GEN-LAST:event_ButtonviewActionPerformed
 
     private void ButtonpayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonpayActionPerformed
-        new userPayment(username,alias).setVisible(true);        // TODO add your handling code here:
+        String [] userinformation = information.split(",");
+        this.setVisible(false);
+        new userPayment(userinformation[0],userinformation[1]).setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_ButtonpayActionPerformed
 
     private void ButtonbakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonbakActionPerformed
     this.setVisible(false);
     new logIn().setVisible(true);
-        // TODO add your handling code here:
     }//GEN-LAST:event_ButtonbakActionPerformed
 
 
