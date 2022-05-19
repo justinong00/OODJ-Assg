@@ -4,8 +4,6 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
 import java.util.GregorianCalendar;
@@ -13,7 +11,6 @@ import java.util.GregorianCalendar;
 public class Trainer extends javax.swing.JFrame {
     
     private int validation = -1;
-    private int logselect = -1;
     private String username;
     private String alias;
     private String currentdate;
@@ -22,15 +19,17 @@ public class Trainer extends javax.swing.JFrame {
     public Trainer() {
         initComponents();
     }
-    
+
     public Trainer(String username,String alias) throws ParseException {
         initComponents();
         Labeltrainer.setText("Welcome back " + alias);
+        //make the routine column uneditable
         Textroutine.setEditable(false);
         userTrainer ur = new userTrainer();
         this.username = username;
         this.alias = alias;
-        
+       
+        //compare time
         GregorianCalendar cal = new GregorianCalendar();
         currentdate = cal.get(GregorianCalendar.DAY_OF_MONTH)+"/"+(cal.get(GregorianCalendar.MONTH)+1)+"/"+cal.get(GregorianCalendar.YEAR);
         SimpleDateFormat st = new SimpleDateFormat("dd/MM/yyyy");
@@ -38,82 +37,98 @@ public class Trainer extends javax.swing.JFrame {
         
         
         try{
-        String [] info = ur.show();
-        JOptionPane.showMessageDialog(null,info,"Error",JOptionPane.ERROR_MESSAGE);
+        //extract all the content of txt file
+        String [] info = ur.getfilecontent();
         DefaultTableModel tbm = (DefaultTableModel)Tableschedule.getModel();
-        
-        for (int i = 0;i <info.length;i++){
-        String [] add = info[i].split("~");
+        for (int infocount = 0;infocount<info.length;infocount++){
+        String [] addinfo = info[infocount].split("~");
         
         //add[0] = String.format("%04d",Integer.parseInt(add[0]));
-        add[3] = "-";
-        
-        if (add[5].equals(username) && add[6].equals("incomplete")){
-            if (currentdates.compareTo(st.parse(add[1])) <=0){
-                tbm.addRow(add);
+        addinfo[3] = "-";
+        if (addinfo[5].equals(username) && addinfo[6].equals("incomplete")){
+            //check if the username aligns and the session has yet been completed
+            if (currentdates.compareTo(st.parse(addinfo[1])) <=0){
+                //add info into table
+                tbm.addRow(addinfo);
+                }
             }
-
         }
-
-        }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+        
+//rearrange the table rows
+        //get the whole content of the table
+        String [][] tobearrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
         for(int i =0; i<Tableschedule.getRowCount();i++){
             for(int j =0;j<Tableschedule.getColumnCount();j++){
-                arrange[i][j] = String.valueOf(Tableschedule.getValueAt(i,j));
+                tobearrange[i][j] = String.valueOf(Tableschedule.getValueAt(i,j));
             }
         }
 
-        for(int i =0; i<arrange.length;i++){
-            for(int j =i+1;j<arrange.length;j++){
+        for(int i =0; i<tobearrange.length;i++){
+            for(int j =i+1;j<tobearrange.length;j++){
 
-                String [] tempt;
-                String[] year = arrange[i][1].split("/");
-                String[] secondyear = arrange[j][1].split("/");
-                int day1 = Integer.parseInt(year[0]);
-                int month1 = Integer.parseInt(year[1]);
-                int year1 = Integer.parseInt(year[2]);
+                String [] temporaryarray;
+                //split both dates into day, month and year to be parse into specific format
+                String[] date_one = tobearrange[i][1].split("/");
+                String[] date_two = tobearrange[j][1].split("/");
                 
-                int day2 = Integer.parseInt(secondyear[0]);
-                int month2 = Integer.parseInt(secondyear[1]); 
-                int year2 = Integer.parseInt(secondyear[2]);
+                //parse the values into integer
+                int day_one = Integer.parseInt(date_one[0]);
+                int month_one = Integer.parseInt(date_one[1]);
+                int year_one = Integer.parseInt(date_one[2]);
                 
-                String[] time = arrange[i][2].split("-");
-                String[] secondtime = arrange[j][2].split("-");
-                String[] splittime = time[0].split(":");
-                String[] splitsecondtime = secondtime[0].split(":");
-                int time1 = Integer.parseInt(splittime[0]);
-                int time2 = Integer.parseInt(splittime[1]);
-                int secondtime1 = Integer.parseInt(splitsecondtime[0]);
-                int secondtime2 = Integer.parseInt(splitsecondtime[1]);              
-                LocalDateTime time_1=LocalDateTime.of(year1,month1,day1,time1, time2, 00);
-                LocalDateTime time_2=LocalDateTime.of(year2,month2,day2,secondtime1, secondtime2, 00);
-
-                if (time_1.compareTo(time_2) >=0){
-                    tempt = arrange[i];
-                    arrange[i] = arrange[j];
-                    arrange[j] = tempt;
+                int day_two = Integer.parseInt(date_two[0]);
+                int month_two = Integer.parseInt(date_two[1]); 
+                int year_two = Integer.parseInt(date_two[2]);
+                
+                //split the time 
+                String[] time_one = tobearrange[i][2].split("-");
+                String[] time_two = tobearrange[j][2].split("-");
+                
+                //split the start time into hour and minute
+                String[] splittime_one = time_one[0].split(":");
+                String[] splittime_two = time_two[0].split(":");
+                
+                //split the start time into hour and minute
+                int hour_start = Integer.parseInt(splittime_one[0]);
+                int hour_end = Integer.parseInt(splittime_one[1]);
+                
+                //split the end time into hour and minute
+                int hour_two_start = Integer.parseInt(splittime_two[0]);
+                int hour_two_end = Integer.parseInt(splittime_two[1]);      
+                
+                //combine the parsed start time into local date time format
+                LocalDateTime time_first=LocalDateTime.of(year_one,month_one,day_one,hour_start, hour_end, 00);
+                LocalDateTime time_second=LocalDateTime.of(year_two,month_two,day_two,hour_two_start, hour_two_end, 00);
+                
+                //compare the time and place the earlier start time first
+                if (time_first.compareTo(time_second) >=0){
+                    temporaryarray = tobearrange[i];
+                    tobearrange[i] = tobearrange[j];
+                    tobearrange[j] = temporaryarray;
                     
                 }
             }
         }
         
+        //remove all of the rows in the table
         int numberofrowneededtoberemove = tbm.getRowCount();
         if(tbm.getRowCount()>-1){
             for(int i = 0;i<numberofrowneededtoberemove; i++){
             tbm.removeRow(0);
             }
         }
-        JOptionPane.showMessageDialog(null,arrange,"Error",JOptionPane.ERROR_MESSAGE);
-        for (int i = 0;i <arrange.length;i++){
-                tbm.addRow(arrange[i]);
-            }
-//////////////////////////////////////////////////////////////////////////////////
         
-        }//heree
+        //add the rearranged row
+        for (int i = 0;i <tobearrange.length;i++){
+                tbm.addRow(tobearrange[i]);
+            }
+//rearrange the row
+        
+        }
         catch (IOException e){
         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
         }
+        //make the table uneditable
         Tableschedule.setDefaultEditor(Object.class, null);
     }
 
@@ -199,11 +214,6 @@ public class Trainer extends javax.swing.JFrame {
 
         Grouplog.add(Checkprevioussession);
         Checkprevioussession.setText("Show all sessions");
-        Checkprevioussession.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CheckprevioussessionMouseClicked(evt);
-            }
-        });
         Checkprevioussession.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CheckprevioussessionActionPerformed(evt);
@@ -335,15 +345,21 @@ public class Trainer extends javax.swing.JFrame {
 
     private void ButtonbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonbackActionPerformed
         this.setVisible(false);
-        new Trainermainpage(username,alias).setVisible(true);  
+        userTrainer trainer = new userTrainer();
+        trainer.setUsername(username);
+        trainer.setAlias(alias);
+        new Trainermainpage(trainer.outinfo()).setVisible(true);  
         
     }//GEN-LAST:event_ButtonbackActionPerformed
 
     private void ButtonmodifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonmodifyActionPerformed
-
+        //ensure a row is selected
         if (Tableschedule.getSelectedRow() != -1){
-
+            
+            //ensure that the row is not chanegd during modification
             if (validation == Tableschedule.getSelectedRow()){
+                
+                //change the status of the sessions
                 String status ;
                 if (Checkstatus.isSelected()){
                     status = "complete";
@@ -353,15 +369,22 @@ public class Trainer extends javax.swing.JFrame {
 
                 int column = 0;
                 int row = Tableschedule.getSelectedRow();
+                
+                //get the specific session id of the session
                 String value = Tableschedule.getModel().getValueAt(row, column).toString();
+                
+                //contain the information needed to update the file
                 String modifiedcontent = value+"~"+Textstartlog.getText()+"~"+Textendlog.getText()+"~"+status;
 
                 userTrainer ur = new userTrainer ();
                 try{
+                    //update the txt file
                     ur.modifylog(modifiedcontent);
                     JOptionPane.showMessageDialog(null,"Successfully Modified");
-                    //here
+                    
+                    //update the table to reflect the changes
                     DefaultTableModel tbm = (DefaultTableModel)Tableschedule.getModel();
+                    //remove all of the rows
                     int numberofrowneededtoberemove = tbm.getRowCount();
                     if(tbm.getRowCount()>-1){
                     for(int i = 0;i<numberofrowneededtoberemove; i++){
@@ -369,6 +392,7 @@ public class Trainer extends javax.swing.JFrame {
                     }
                      }
                     
+                    //show only sessions that are incomplete
                     if (Checkprevioussession.isSelected() == false && Checktoday.isSelected() == false){
                                 Textstartlog.setText("");
                                 Textendlog.setText("");
@@ -383,81 +407,113 @@ public class Trainer extends javax.swing.JFrame {
                                     JOptionPane.showMessageDialog(null,"Conversion failed","Error",JOptionPane.ERROR_MESSAGE);
                                 }
                         try{
-                        String [] info = ur.show();
+                            //get all of the content of the file
+                            String [] info = ur.getfilecontent();
 
+                            for (int i = 0;i <info.length;i++){
+                            String [] add = info[i].split("~");
+
+                            //add[0] = String.format("%04d",Integer.parseInt(add[0]));
+                            add[3] = "-";
+
+                            try{
+                            if (add[5].equals(username) && add[6].equals("incomplete")){
+                                if (currentdates.compareTo(st.parse(add[1])) <=0){
+                                    //add the content into the table
+                                    tbm.addRow(add);
+                                }
+
+                            }
+                            }catch (ParseException e){
+                                JOptionPane.showMessageDialog(null,"Conversion failed","Error",JOptionPane.ERROR_MESSAGE);
+                            }
+
+                            }
+                        }
+                        catch (IOException e){
+                        JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+                        
+//////////////reaarange content
+                        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+                        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+                            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
+                            }
+                        }
+                        //rearrange the array
+                        String [][] arrange2 = ur.rearrangecontent(arrange);
+                        
+                            int numberofrow = tbm.getRowCount();
+                            if(tbm.getRowCount()>-1){
+                                for(int i3 = 0;i3<numberofrow; i3++){
+                                tbm.removeRow(0);
+                                }
+                            }
+                            
+                            for (int i4 = 0;i4 <arrange.length;i4++){
+                                    tbm.addRow(arrange2[i4]);
+                                }
+//////////////////////////////////////////////////////////// 
+                        
+                        
+                    }
+                    //show previous sessions as well
+                    else if(Checkprevioussession.isSelected() == true && Checktoday.isSelected() == false){
+                        
+                        Textstartlog.setText("");
+                        Textendlog.setText("");
+                        Textroutine.setText("");
+                        Checkstatus.setSelected(false);
+
+
+                        try{
+                        String [] info = ur.getfilecontent();
+                        numberofrowneededtoberemove = tbm.getRowCount();
+                        if(tbm.getRowCount()>-1){
+                            for(int i = 0;i<numberofrowneededtoberemove; i++){
+                            tbm.removeRow(0);
+                            }
+                        }
                         for (int i = 0;i <info.length;i++){
                         String [] add = info[i].split("~");
 
                         //add[0] = String.format("%04d",Integer.parseInt(add[0]));
                         add[3] = "-";
-                        
-                        try{
-                        if (add[5].equals(username) && add[6].equals("incomplete")){
-                            if (currentdates.compareTo(st.parse(add[1])) <=0){
-                                tbm.addRow(add);
-                            }
 
-                        }///////////////////////////////////////////
+                        if (add[5].equals(username)){
+                            tbm.addRow(add);
+                        }
+                        }
+//////////////reaarange content
+                        
                         String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
-                        for(i =0; i<Tableschedule.getRowCount();i++){
-                        for(int j =0;j<Tableschedule.getColumnCount();j++){
-                        arrange[i][j] = String.valueOf(Tableschedule.getValueAt(i,j));
-                        }
-                        }
-                        String [][] rearranged = ur.rearrangearray(arrange);
-                                
-                        int removerow = tbm.getRowCount();
-                        if(tbm.getRowCount()>-1){
-                            for(int rowremove = 0;rowremove<removerow; rowremove++){
-                            tbm.removeRow(0);
+                        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+                            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
                             }
                         }
-                        JOptionPane.showMessageDialog(null,arrange,"Error",JOptionPane.ERROR_MESSAGE);
-                        for (int addrow = 0;addrow <arrange.length;addrow++){
-                                tbm.addRow(rearranged[addrow]);
+
+                        //rearrange the array
+                        String [][] arrange2 = ur.rearrangecontent(arrange);
+                        
+                            int numberofrow = tbm.getRowCount();
+                            if(tbm.getRowCount()>-1){
+                                for(int i3 = 0;i3<numberofrow; i3++){
+                                tbm.removeRow(0);
+                                }
                             }
+                            
+                            for (int i4 = 0;i4 <arrange.length;i4++){
+                                    tbm.addRow(arrange2[i4]);
+                                }
+//////////////////////////////////////////////////////////// 
                         
-                        /////////////////////////////////////
-                        }catch (ParseException e){
-                            JOptionPane.showMessageDialog(null,"Conversion failed","Error",JOptionPane.ERROR_MESSAGE);
-                        }
-                        
-                        }
                         }
                         catch (IOException e){
                         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
                         }
-                    }
-                    else if(Checkprevioussession.isSelected() == true && Checktoday.isSelected() == false){
-                        
-                                Textstartlog.setText("");
-                                Textendlog.setText("");
-                                Textroutine.setText("");
-                                Checkstatus.setSelected(false);
-                                
-                                
-                                try{
-                                String [] info = ur.show();
-                                numberofrowneededtoberemove = tbm.getRowCount();
-                                if(tbm.getRowCount()>-1){
-                                    for(int i = 0;i<numberofrowneededtoberemove; i++){
-                                    tbm.removeRow(0);
-                                    }
-                                }
-                                for (int i = 0;i <info.length;i++){
-                                String [] add = info[i].split("~");
-
-                                //add[0] = String.format("%04d",Integer.parseInt(add[0]));
-                                add[3] = "-";
-
-                                if (add[5].equals(username)){
-                                    tbm.addRow(add);
-                                }
-                                }
-                                }
-                                catch (IOException e){
-                                JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
-                                }
+                    //show today's sessions only
                     }else if(Checkprevioussession.isSelected() == false && Checktoday.isSelected() == true){
                         
                                 Textstartlog.setText("");
@@ -475,7 +531,7 @@ public class Trainer extends javax.swing.JFrame {
                                 }
                                 
                                 try{
-                                String [] info = ur.show();
+                                String [] info = ur.getfilecontent();
                                 numberofrowneededtoberemove = tbm.getRowCount();
                                 if(tbm.getRowCount()>-1){
                                     for(int i = 0;i<numberofrowneededtoberemove; i++){
@@ -498,14 +554,39 @@ public class Trainer extends javax.swing.JFrame {
                                         }catch (ParseException e){
                                             JOptionPane.showMessageDialog(null,"Conversion failed","Error",JOptionPane.ERROR_MESSAGE);
                                         }
-                                
                                 }
+                                
+//////////////reaarange content
+                        
+                        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+                        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+                            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
+                            }
+                        }
+
+                        //rearrange the array
+                        String [][] arrange2 = ur.rearrangecontent(arrange);
+                        
+                            int numberofrow = tbm.getRowCount();
+                            if(tbm.getRowCount()>-1){
+                                for(int i3 = 0;i3<numberofrow; i3++){
+                                tbm.removeRow(0);
+                                }
+                            }
+                            
+                            for (int i4 = 0;i4 <arrange.length;i4++){
+                                    tbm.addRow(arrange2[i4]);
+                                }
+//////////////////////////////////////////////////////////// 
+                                
+                                
                                 }
                                 catch (IOException e){
                                 JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
                                 }
                     }
-                }//here
+                }
                 catch(IOException e){
                     JOptionPane.showMessageDialog(null,"Invalid file","Error",JOptionPane.ERROR_MESSAGE);
                 }
@@ -528,12 +609,14 @@ public class Trainer extends javax.swing.JFrame {
                 int row = Tableschedule.getSelectedRow();
                 String value = Tableschedule.getModel().getValueAt(row, column).toString();
                 
-                String logvalue = ur.showlog(value);
+                String logvalue = ur.displayspecificlog(value);
                 String [] splitlog = logvalue.split("~");
-                Textstartlog.setText(splitlog[0]);
-                Textendlog.setText(splitlog[1]);
-                Textroutine.setText(splitlog[2]);
-                if (splitlog[3].equals("complete")){
+                
+                Textstartlog.setText(splitlog[7]);
+                Textendlog.setText(splitlog[8]);
+                Textroutine.setText(splitlog[3]);
+                
+                if (splitlog[1].equals("complete")){
                     Checkstatus.setSelected(true);
                 }else{
                     Checkstatus.setSelected(false);
@@ -561,7 +644,7 @@ public class Trainer extends javax.swing.JFrame {
         Checkstatus.setSelected(false);
         try{
         userTrainer ur = new userTrainer();
-        String [] info = ur.show();
+        String [] info = ur.getfilecontent();
         DefaultTableModel tbm = (DefaultTableModel)Tableschedule.getModel();
         int numberofrowneededtoberemove = tbm.getRowCount();
         if(tbm.getRowCount()>-1){
@@ -579,6 +662,26 @@ public class Trainer extends javax.swing.JFrame {
             tbm.addRow(add);
         }
         }
+
+        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
+            }
+        }
+
+        String [][] arrange2 = ur.rearrangecontent(arrange);
+
+            int numberofrow = tbm.getRowCount();
+            if(tbm.getRowCount()>-1){
+                for(int i3 = 0;i3<numberofrow; i3++){
+                tbm.removeRow(0);
+                }
+            }
+
+            for (int i4 = 0;i4 <arrange.length;i4++){
+                    tbm.addRow(arrange2[i4]);
+                }
         }
         catch (IOException e){
         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
@@ -588,10 +691,6 @@ public class Trainer extends javax.swing.JFrame {
         
         // TODO add your handling code here:
     }//GEN-LAST:event_CheckprevioussessionActionPerformed
-
-    private void CheckprevioussessionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CheckprevioussessionMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CheckprevioussessionMouseClicked
 
     private void ButtonclearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonclearActionPerformed
     Grouplog.clearSelection();
@@ -611,7 +710,7 @@ public class Trainer extends javax.swing.JFrame {
         
         try{
         userTrainer ur = new userTrainer();
-        String [] info = ur.show();
+        String [] info = ur.getfilecontent();
         DefaultTableModel tbm = (DefaultTableModel)Tableschedule.getModel();
         int numberofrowneededtoberemove = tbm.getRowCount();
         if(tbm.getRowCount()>-1){
@@ -636,8 +735,31 @@ public class Trainer extends javax.swing.JFrame {
         }catch (ParseException e){
             JOptionPane.showMessageDialog(null,"Conversion failed","Error",JOptionPane.ERROR_MESSAGE);
         }
-
         }
+        
+//////////////reaarange content
+        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
+            }
+        }
+
+        //rearrange the array
+        String [][] arrange2 = ur.rearrangecontent(arrange);
+
+            int numberofrow = tbm.getRowCount();
+            if(tbm.getRowCount()>-1){
+                for(int i3 = 0;i3<numberofrow; i3++){
+                tbm.removeRow(0);
+                }
+            }
+
+            for (int i4 = 0;i4 <arrange.length;i4++){
+                    tbm.addRow(arrange2[i4]);
+                }
+//////////////////////////////////////////////////////////// 
+        
         }
         catch (IOException e){
         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);
@@ -663,7 +785,7 @@ public class Trainer extends javax.swing.JFrame {
         
         try{
         userTrainer ur = new userTrainer();
-        String [] info = ur.show();
+        String [] info = ur.getfilecontent();
         DefaultTableModel tbm = (DefaultTableModel)Tableschedule.getModel();
         int numberofrowneededtoberemove = tbm.getRowCount();
         if(tbm.getRowCount()>-1){
@@ -689,6 +811,31 @@ public class Trainer extends javax.swing.JFrame {
         }
                                 
         }
+        
+ //////////////reaarange content                
+        String [][] arrange = new String [Tableschedule.getRowCount()][Tableschedule.getColumnCount()];
+        for(int ii =0; ii<Tableschedule.getRowCount();ii++){
+            for(int j =0;j<Tableschedule.getColumnCount();j++){
+                arrange[ii][j] = String.valueOf(Tableschedule.getValueAt(ii,j));
+            }
+        }
+
+        //rearrange the array
+        String [][] arrange2 = ur.rearrangecontent(arrange);
+
+            int numberofrow = tbm.getRowCount();
+            if(tbm.getRowCount()>-1){
+                for(int i3 = 0;i3<numberofrow; i3++){
+                tbm.removeRow(0);
+                }
+            }
+
+            for (int i4 = 0;i4 <arrange.length;i4++){
+                    tbm.addRow(arrange2[i4]);
+                }
+//////////////////////////////////////////////////////////// 
+        
+        
         }
         catch (IOException e){
         JOptionPane.showMessageDialog(null,"Invalid File","Error",JOptionPane.ERROR_MESSAGE);

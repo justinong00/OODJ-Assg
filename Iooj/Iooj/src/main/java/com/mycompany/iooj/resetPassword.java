@@ -1,12 +1,10 @@
 package com.mycompany.iooj;
 import javax.swing.*;
-import java.io.*;
 
 
 public class resetPassword extends javax.swing.JFrame {
     
     private String username;
-
     public resetPassword() {
         initComponents();
     }
@@ -125,8 +123,10 @@ public class resetPassword extends javax.swing.JFrame {
         else{
             if (String.valueOf(Textpassword.getPassword()).equals(String.valueOf(Textpassword.getPassword()))){
                 if(Checkagree.isSelected()){
-                    userlogin un = new userlogin(username);
-                    un.resetpassword(String.valueOf(Textpassword.getPassword()));
+                    userlogin login = new userlogin();
+                    login.setUsername(username);
+                    login.setPassword(String.valueOf(Textpassword.getPassword()));
+                    login.resetpassword();
                     this.setVisible(false);
                     new logIn().setVisible(true);
                 }
